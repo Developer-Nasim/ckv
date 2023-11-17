@@ -15,23 +15,8 @@
     </head>
     <body> 
     <!-- header-area START -->
-    
-      <video id="liveVideo" width="500" height="300" controls>
-        <source src="/html/compileonline.mp4" type="video/mp4">
-        This browser doesn't support the video tag.
-    </video>
-
-    <!-- <video width="400" controls>
-        <source src="" type="video/mp4">
-        <source src="https://www.w3schools.com/html/mov_bbb.ogg" type="video/ogg">
-        Your browser does not support HTML video.
-      </video> -->
-
-      Extra </br>
-      <video width="400"  src="https://www.w3schools.com/html/mov_bbb.mp4" controls> 
-        Your browser does not support HTML video.
-      </video>
-
+    <button onclick="takePhoto()">Take Photo</button>
+    <img id="photo" width="500" height="300" style="display: none;">
  
  
  
@@ -42,28 +27,33 @@
 		<!-- JS here --> 
         <script src="assets/js/jquery-3.4.1.min.js"></script> 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>  
-<!--         <script>
-            async function startStreaming() {
-                try {
-                    const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-                    const videoElement = document.getElementById('liveVideo');
-    
-                    // Check if the browser supports the 'srcObject' property
-                    if ('srcObject' in videoElement) {
-                        videoElement.srcObject = mediaStream;
-                    } else {
-                        // For older browsers, use the URL.createObjectURL method
-                        videoElement.src = window.URL.createObjectURL(mediaStream);
-                    }
-    
-                    videoElement.play(); // Start playing the stream
-                } catch (error) {
-                    console.error('Error accessing camera and microphone:', error);
-                }
+ <script>
+        async function takePhoto() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                const video = document.createElement('video');
+                video.srcObject = stream;
+                video.play();
+
+                video.addEventListener('loadedmetadata', () => {
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
+
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                    const photo = document.getElementById('photo');
+                    photo.src = canvas.toDataURL('image/png');
+                    photo.style.display = 'block';
+
+                    // Stop the video stream after capturing the photo
+                    stream.getTracks().forEach(track => track.stop());
+                });
+            } catch (error) {
+                console.error('Error accessing camera:', error);
             }
-    
-            // Call the function to start streaming
-            startStreaming();
-        </script> -->
+        }
+    </script>
     </body>
 </html>
